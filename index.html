@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hi & Hà | Thiệp cưới online</title>
+</head>
+<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  /*
+    Luxury editorial direction, bang mau TRANG - DEN (chi Linh chot 2026-08-15
+    cho thuong hieu Dolinhanh, thay bang mau ivory/beige/olive cu cua anh
+    Cuong): nen trang, chu den, duong ke xam nhat, anh full-bleed voi chu dat
+    lech tam. Single-theme by choice — emulates a printed fine-art wedding
+    publication, not a light/dark mode of one page.
+    Ten bien giu nguyen (--ivory, --beige, --olive...) de khong phai sua ~200
+    cho dung bien trong file; chi doi GIA TRI.
+  */
+  :root {
+    --ivory: #ffffff;
+    --beige: #f4f4f4;
+    --line: #dcdcdc;
+    --taupe: #8c8c8c;
+    --olive: #2b2b2b;
+    --charcoal: #0e0e0e;
+    --charcoal-soft: #6b6b6b;
+    --dark: #000000;
+    --serif: Georgia, "Noto Serif", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; scroll-padding-top: 64px; }
+  body { margin: 0; font-family: var(--sans); color: var(--charcoal); background: var(--ivory); }
+  ::selection { background: var(--taupe); color: var(--ivory); }
+  h1, h2, h3 { font-family: var(--serif); text-wrap: balance; margin: 0; font-weight: 400; }
+  em { font-style: italic; }
+  img { max-width: 100%; }
+  svg { display: block; }
+  button { font: inherit; }
+
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: var(--olive); z-index: 60; transition: width 0.1s linear; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px clamp(20px, 5vw, 48px);
+    background: transparent; color: var(--ivory);
+    transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .nav.solid { background: rgba(244, 244, 244, 0.94); color: var(--charcoal); box-shadow: 0 1px 0 var(--line); }
+  .nav-mono { font-family: var(--serif); font-style: italic; letter-spacing: 0.05em; font-size: 1.05rem; }
+  .nav-links { display: flex; gap: clamp(12px, 2.6vw, 24px); }
+  .nav-links a {
+    color: inherit; text-decoration: none; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.9;
+    padding-bottom: 3px; border-bottom: 1px solid transparent; white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible { border-color: currentColor; opacity: 1; }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: min(96vh, 820px); overflow: hidden; margin-top: -64px; }
+  /* object-position PHẢI chỉnh tay theo từng ảnh. Với ảnh DỌC trên màn hình
+     NGANG (desktop), cover chỉ hiện 1 dải ngang mỏng — quy tắc đã kiểm chứng
+     (Diệp & Quân 2026-08-06): %y đặt ≈ ĐÚNG vị trí mặt trong ảnh (y_mặt chia
+     chiều cao ảnh, ĐO bằng cách nhìn ảnh thật — đừng đoán "chắc ~45%", ảnh
+     D&Q tưởng 45% hoá ra 56% vì trên đầu còn nguyên vòm cửa) thì mặt nằm nửa
+     TRÊN khung trên mọi cỡ cửa sổ, chữ hero bottom 8vh không bao giờ đụng.
+     LUÔN xem thử ở 3 khổ: 1280x800, khổ RỘNG-THẤP 1600x680 (cửa sổ browser
+     thật trên laptop — chính khổ này từng làm chữ đè mặt dù 1280x800 nhìn
+     ổn), và mobile 375. */
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+  /* Hero kiểu "Coming Soon" (anh Cường chốt 2026-08-06, thay bản thẻ card ngà
+     vì card to che người trên mobile): chữ sáng mảnh đặt THẲNG lên ảnh, canh
+     giữa ngang ở 1/3 dưới khung (ngang ngực/eo — không đè mặt), nổi trên mọi
+     ảnh nhờ 2 lớp bảo hiểm: text-shadow + gradient tối nhẹ trên/đậm dần dưới
+     (.hero::after). Thông tin phụ dồn thành 1 dòng chữ nhỏ .hero-strip sát
+     đáy — giống các poster teaser "coming soon". */
+  .hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.16), rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, rgba(0,0,0,0.52));
+  }
+  .hero-text {
+    /* bottom thấp (~8vh) để cả khối chữ nằm ngang NGỰC/EO người trong ảnh —
+       từng để 15vh và chữ đè ngay mặt chú rể trên desktop (band ảnh dọc đưa
+       mặt về giữa khung). Nếu ảnh khác vẫn bị đè mặt: hạ tiếp bottom, đừng
+       tăng. */
+    position: absolute; left: 0; right: 0; bottom: clamp(60px, 8vh, 100px); z-index: 1;
+    text-align: center; padding: 0 20px; color: var(--ivory);
+    text-shadow: 0 2px 28px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.45);
+  }
+  .hero-kicker { font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; margin: 0 0 14px; color: rgba(255,255,255,0.92); }
+  .hero-text h1 { font-size: clamp(2.4rem, 6.5vw, 4.2rem); line-height: 1.05; letter-spacing: 0.05em; }
+  .hero-date { font-size: 0.9rem; letter-spacing: 0.22em; margin: 18px 0 0; font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.92); }
+  .hero-strip {
+    position: absolute; left: 0; right: 0; bottom: 26px; z-index: 1; text-align: center;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0;
+    color: rgba(255,255,255,0.85); padding: 0 16px; text-shadow: 0 1px 12px rgba(0,0,0,0.5);
+  }
+  .hero-strip b { font-weight: 600; }
+  .scroll-cue {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; background: none; border: none;
+    font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.85);
+    cursor: pointer; padding: 4px 0; animation: bob 2.6s ease-in-out infinite;
+  }
+  .scroll-cue svg { width: 15px; height: 22px; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  /* ---------- Shared rhythm ---------- */
+  section, footer.thanks { padding: clamp(64px, 10vw, 108px) clamp(24px, 6vw, 56px); }
+  .eyebrow { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--olive); margin: 0 0 18px; font-weight: 600; }
+  .eyebrow.center { text-align: center; }
+  .section-lede { text-align: center; font-size: 0.92rem; color: var(--charcoal-soft); max-width: 52ch; margin: -8px auto 40px; line-height: 1.7; }
+  [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  [data-reveal].in { opacity: 1; transform: none; }
+
+  .btn-line {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 11px 20px; border: 1px solid var(--charcoal); color: var(--charcoal); text-decoration: none;
+    background: none; cursor: pointer; font-family: var(--sans); margin: 4px 4px 0;
+  }
+  .btn-line svg { width: 15px; height: 15px; }
+  .btn-line:hover { background: var(--charcoal); color: var(--ivory); }
+  .btn-line.ghost { border-color: var(--line); color: var(--charcoal-soft); }
+  .btn-line.ghost:hover { background: var(--charcoal-soft); border-color: var(--charcoal-soft); color: var(--ivory); }
+  .btn-line:focus-visible, .scroll-cue:focus-visible, .nav-links a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .rep-tile:focus-visible {
+    outline: 2px solid var(--olive); outline-offset: 2px;
+  }
+
+  /* ---------- Welcome (split) ---------- */
+  .welcome { background: var(--beige); }
+  .welcome-grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1100px; margin: 0 auto; }
+  /* 1 cot: da bo anh Welcome (2026-08-15, thiep chi dung 1 anh hero duy nhat) */
+  .welcome-grid { max-width: 720px; }
+  .welcome-inner { display: flex; gap: 28px; }
+  .mono-vertical { font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--taupe); line-height: 1.9; writing-mode: vertical-rl; text-orientation: mixed; flex: none; }
+  .welcome-inner h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 18px; letter-spacing: 0.01em; }
+  .welcome-inner p { font-size: 0.95rem; line-height: 1.85; color: var(--charcoal); max-width: 46ch; margin: 0 0 1.1em; }
+  .welcome-inner .sign-off { margin-bottom: 2px; }
+  .welcome-inner .signature { font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--olive); margin: 0; }
+  .welcome-photo { aspect-ratio: 4 / 5; overflow: hidden; }
+  .welcome-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ---------- Story track (icon timeline) ---------- */
+  .story-track { display: flex; justify-content: center; gap: clamp(10px, 4vw, 20px); max-width: 900px; margin: 0 auto; position: relative; }
+  .story-step { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; padding-top: 4px; }
+  .story-step::before {
+    content: ""; position: absolute; top: 20px; left: -50%; width: 100%; height: 1px;
+    background-image: linear-gradient(to right, var(--line) 40%, transparent 0%); background-size: 8px 1px; background-repeat: repeat-x;
+  }
+  .story-step:first-child::before { display: none; }
+  .story-step .icon { width: 26px; height: 26px; color: var(--olive); margin-bottom: 14px; background: var(--ivory); position: relative; z-index: 1; }
+  .story-step .step-year { font-size: 0.78rem; letter-spacing: 0.08em; color: var(--taupe); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+  .story-step .step-label { font-size: 0.85rem; color: var(--charcoal); }
+
+  /* ---------- Story detail (photo + prose) ---------- */
+  .story-grid { display: grid; grid-template-columns: 1fr; gap: 28px; max-width: 620px; margin: 56px auto 0; }
+  @media (min-width: 700px) { .story-grid { grid-template-columns: 0.85fr 1.15fr; align-items: start; gap: 44px; max-width: 960px; } }
+  .story-photo { aspect-ratio: 4 / 5; overflow: hidden; }
+  .story-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story-text h3 { font-size: clamp(1.3rem, 3.2vw, 1.6rem); margin-bottom: 16px; }
+  .story-text p { font-size: 0.94rem; line-height: 1.85; color: var(--charcoal); margin: 0 0 1em; }
+
+  /* ---------- Editorial photo grid (reportage + pre-wedding share this) ---------- */
+  /* Lưới ĐỀU: 3 cột desktop / 2 cột mobile, mọi ô cùng tỉ lệ 4:5. Bản cũ dùng
+     span 4/2/3 xen kẽ — nhìn "editorial" trên lý thuyết nhưng vì mỗi ô tự giữ
+     aspect-ratio nên các hàng cao thấp so le, anh Cường chê lệch lạc trên
+     desktop (2026-08-06, thiệp Diệp & Quân). Số ảnh gallery nên chia hết cho
+     cả 3 và 2 (6 hoặc 12 ảnh) để không có ô mồ côi cuối lưới. */
+  .rep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 1080px; margin: 0 auto; }
+  .rep-tile { min-width: 0; margin: 0; overflow: hidden; aspect-ratio: 4 / 5; cursor: zoom-in; position: relative; padding: 0; border: none; background: none; display: block; }
+  @media (max-width: 640px) {
+    .rep-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .rep-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+  .rep-tile:hover img { transform: scale(1.04); }
+  .rep-more-note { text-align: center; font-size: 0.82rem; color: var(--charcoal-soft); margin-top: 24px; }
+  .rep-actions { display: flex; justify-content: center; margin-top: 28px; }
+
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 80; background: rgba(16, 16, 16, 0.96);
+    display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox figure { margin: 0; max-width: min(90vw, 900px); max-height: 84vh; }
+  .lightbox img { max-width: 100%; max-height: 84vh; display: block; object-fit: contain; }
+  .lightbox-close, .lightbox-prev, .lightbox-next {
+    position: absolute; background: none; border: none; color: var(--ivory); cursor: pointer; padding: 10px;
+  }
+  .lightbox-close { top: 16px; right: 16px; width: 40px; height: 40px; }
+  .lightbox-prev, .lightbox-next { top: 50%; transform: translateY(-50%); width: 48px; height: 48px; }
+  .lightbox-prev { left: clamp(4px, 2vw, 24px); }
+  .lightbox-next { right: clamp(4px, 2vw, 24px); }
+  .lightbox-close svg, .lightbox-prev svg, .lightbox-next svg { width: 100%; height: 100%; }
+  .lightbox-count { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.78rem; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Wedding info (3 cards) ---------- */
+  .wedding-day { background: var(--beige); }
+  .wedding-cards { display: grid; grid-template-columns: 1fr; gap: 1px; max-width: 1000px; margin: 0 auto; background: var(--line); }
+  @media (min-width: 720px) { .wedding-cards { grid-template-columns: repeat(3, 1fr); } }
+  .wedding-card { background: var(--beige); padding: 36px clamp(20px, 4vw, 32px); text-align: center; }
+  .wedding-card .icon { width: 28px; height: 28px; margin: 0 auto 16px; color: var(--olive); }
+  .card-label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--taupe); margin: 0 0 8px; }
+  .card-time { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 12px; }
+  .card-venue { font-size: 0.86rem; line-height: 1.6; color: var(--charcoal-soft); margin: 0 0 16px; }
+  .card-maps { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .card-maps .btn-line { font-size: 0.64rem; padding: 8px 12px; margin: 0; }
+
+  /* ---------- Countdown ---------- */
+  .countdown { display: flex; justify-content: center; gap: clamp(16px, 4vw, 34px); }
+  .countdown .unit { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+  .countdown .num { font-family: var(--serif); font-size: clamp(1.8rem, 6vw, 2.6rem); color: var(--charcoal); font-variant-numeric: tabular-nums; line-height: 1; }
+  .countdown .label { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); margin-top: 6px; }
+
+  /* ---------- Highlight video (placeholder) ---------- */
+  .video-section { padding: 0; position: relative; }
+  /* Cùng quy tắc object-position như hero: khung ngang + ảnh dọc = dải mỏng,
+     %y phải đặt ≈ vị trí mặt trong ảnh (đo bằng mắt từ ảnh thật). Ảnh ôm/đứng
+     sát nhau thường có mặt ở 1/5 trên (~15-25%) — mặc định 50% ở đây từng cắt
+     cụt đầu ở thiệp Diệp & Quân (2026-08-06). Chỉnh inline style trên thẻ img
+     theo từng ảnh. */
+  .video-section img { width: 100%; height: min(88vw, 620px); object-fit: cover; object-position: 50% 25%; display: block; }
+  .video-veil { position: absolute; inset: 0; background: rgba(16,16,16,0.32); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--ivory); text-align: center; padding: 24px; }
+  .video-play { width: 62px; height: 62px; border: 1px solid var(--ivory); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .video-play svg { width: 20px; height: 20px; margin-left: 3px; }
+  .video-veil .note { font-size: 0.8rem; letter-spacing: 0.06em; max-width: 40ch; opacity: 0.9; }
+
+  /* ---------- Dress code ---------- */
+  .dress-code-row { display: flex; justify-content: center; gap: clamp(40px, 8vw, 90px); flex-wrap: wrap; max-width: 700px; margin: 0 auto; }
+  .dress-col { text-align: center; }
+  .dress-col .who { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--taupe); margin-bottom: 16px; display: block; }
+  .swatches { display: flex; gap: 16px; justify-content: center; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .swatch .dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.12); }
+  .swatch .name { font-size: 0.68rem; color: var(--charcoal-soft); }
+
+  /* ---------- RSVP (khong co loi chuc/wishes-wall - ban GitHub Pages tinh) ---------- */
+  .rsvp-wrap { max-width: 480px; margin: 0 auto; }
+  form#rsvpForm { display: flex; flex-direction: column; gap: 16px; }
+  /* BAT BUOC: display:flex o tren de len thuoc tinh [hidden], khong co dong nay
+     thi bam Gui xong form van hien, khach tuong chua gui va bam lai nhieu lan
+     (da dinh 16/08/2026 — Sheet ra may dong trung). */
+  form#rsvpForm[hidden] { display: none; }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field input, .field select, .field textarea { min-width: 0; width: 100%; }
+  .field label { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal-soft); }
+  .field input, .field select, .field textarea {
+    font-family: var(--sans); font-size: 0.92rem; padding: 10px 12px; border: 1px solid var(--line); background: #fafafa; color: var(--charcoal);
+  }
+  /* 2 lua chon xep thanh 2 O CANH NHAU giong hang "Ho va ten / So dien thoai"
+     (.row-2) — chi Linh chot 2026-08-15. Moi lua chon co khung + nen giong o
+     nhap de ca form nhin dong bo; man hinh hep thi tu xuong 1 cot.
+     GOC RE LOI CU: rule ".field input { width: 100% }" o tren an ca vao
+     input[type=radio], keo nut tron rong het hang nen chu bi day ra xa va
+     chong len nhau -> BAT BUOC ghi de width: auto o day, dung xoa. */
+  .radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .radio-row { grid-template-columns: 1fr; } }
+  .radio-row label {
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+    font-size: 0.88rem; text-transform: none; letter-spacing: 0;
+    padding: 10px 12px; border: 1px solid var(--line); background: #fafafa;
+    color: var(--charcoal); cursor: pointer;
+  }
+  .radio-row label:hover { border-color: var(--taupe); }
+  .radio-row label:has(input:checked) { border-color: var(--charcoal); }
+  .radio-row input[type="radio"] { width: auto; flex: none; margin: 0; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+  .rsvp-submit { align-self: flex-start; margin-top: 4px; }
+  .rsvp-note { font-size: 0.74rem; color: var(--charcoal-soft); margin-top: 4px; }
+
+  .rsvp-success { text-align: center; padding: 20px 4px; }
+  .rsvp-success .icon { width: 34px; height: 34px; color: var(--olive); margin: 0 auto 16px; }
+  .rsvp-success h3 { font-size: 1.3rem; margin-bottom: 10px; }
+  .rsvp-success p { font-size: 0.92rem; color: var(--charcoal-soft); max-width: 42ch; margin: 0 auto 22px; line-height: 1.7; }
+  .rsvp-success .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+  /* ---------- Gift ---------- */
+  .gift-cards { display: flex; flex-direction: column; gap: 20px; max-width: 760px; margin: 0 auto 16px; }
+  @media (min-width: 640px) { .gift-cards { flex-direction: row; } }
+  .gift-card { flex: 1; border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .gift-card .who { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe); }
+  /* Ảnh QR ngân hàng khách gửi: PHẢI CẮT GỌN trước khi nhúng (chỉ giữ mã QR +
+     tên chủ TK + số TK, bỏ logo ngân hàng/nền trang trí), nén width 500
+     quality 92, và LUÔN decode bằng cv2 đối chiếu số TK với số khách gõ tay
+     (đã bắt 1 vụ lệch số thật 2026-08-06) — chi tiết ở placeholder-inventory
+     mục 5. */
+  .qr-box {
+    width: 108px; height: 108px; border: 1px dashed var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--charcoal-soft);
+    position: relative;
+  }
+  .qr-box::before, .qr-box::after { content: ""; position: absolute; width: 10px; height: 10px; border: 1px solid var(--olive); }
+  .qr-box::before { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .qr-box::after { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+  .qr-box .qr-label { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .qr-box img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+  .gift-card .bank { font-size: 0.98rem; font-family: var(--serif); }
+  .gift-card .acct-name { font-size: 0.85rem; color: var(--charcoal-soft); }
+  .gift-card .acct { font-variant-numeric: tabular-nums; color: var(--olive); font-size: 1rem; letter-spacing: 0.03em; }
+  .gift-note { text-align: center; font-size: 0.9rem; color: var(--charcoal-soft); max-width: 52ch; margin: 0 auto; line-height: 1.7; }
+
+  /* ---------- Footer ---------- */
+  /* Footer nen SANG dong bo voi ca trang (chi Linh chot 2026-08-15 — ban cu
+     nen den tuong phan gat voi phan tren). Duong ke mong thay cho mang mau. */
+  /* Nen GHI (--beige) dung bang mau voi section "Wedding Information"
+     (.wedding-day) — chi Linh chot 2026-08-15, thay nen den cua ban goc. */
+  footer.thanks { text-align: center; background: var(--beige); color: var(--charcoal); }
+  footer.thanks h3 { font-size: 1.7rem; margin-bottom: 8px; }
+  footer.thanks p { color: var(--charcoal-soft); font-size: 0.85rem; }
+  footer.thanks .credit { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 26px; color: var(--taupe); }
+  /* Dong "mon qua thiet ke": dung Y HET kieu chu cua .credit (hoa, gian chu
+     rong, co nho) theo yeu cau chi Linh 2026-08-15. */
+  footer.thanks .gift { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 10px; color: var(--taupe); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 12px);
+    background: var(--dark); color: var(--ivory); font-size: 0.82rem; padding: 10px 18px; z-index: 90; max-width: 88vw; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue { animation: none; }
+    [data-reveal] { transition: none; }
+    .rep-tile img { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+  /* Link Instagram cuoi thiep (chi Linh yeu cau 16/08/2026) — chu nho, mo,
+     cung kieu voi dong credit, khong duoc noi bat hon ten cap doi. */
+  footer.thanks .ig { margin-top: 10px; font-size: 0.66rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--charcoal-soft); }
+  footer.thanks .ig a { color: inherit; text-decoration: none;
+    border-bottom: 1px solid var(--line); padding-bottom: 1px; }
+  footer.thanks .ig a:hover { color: var(--charcoal); }
+  footer.thanks .ig-dot { margin: 0 8px; opacity: 0.5; }
+
+
+
+  /* ---------- ẢNH THIỆP QR ĐỂ GỬI BẠN BÈ (16/08/2026) ----------
+     Cô dâu chú rể bấm nút, trình duyệt tự ghép ảnh cưới + mã QR thành một
+     tấm ảnh dọc rồi tải về. Gửi Zalo/Messenger tiện hơn gửi link trần. */
+  .share-card { text-align: center; }
+  .share-preview {
+    max-width: 300px; width: 100%; margin: 0 auto 22px;
+    border: 1px solid var(--line); background: var(--beige);
+    display: block;
+  }
+  .share-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .share-note { font-size: 0.8rem; color: var(--charcoal-soft); margin-top: 14px; max-width: 42ch;
+    margin-left: auto; margin-right: auto; line-height: 1.6; }
+</style>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav" id="nav">
+  <span class="nav-mono">H · H</span>
+  <div class="nav-links">
+    <a href="#top">Trang chủ</a>
+    <a href="#welcome">Lời ngỏ</a>
+    <a href="#wedding-day">Thông tin tiệc</a>
+    <a href="#rsvp">Xác nhận tham dự</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <img class="hero-photo" src="data:image/jpeg;base64,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DEzifPs+leLdIh/493vYv+mab64z/hH/ABd4pgkhvLP7F+/R/n/uJX1rRsrL6nE3+vzPGNK8CeVDH9suP++K7ax8M6Zbf6mOuw8imbK19jAwnjJyMX+xoadJo1lLW5so2UexI+szOR/4RWy/13mPVbZN/wA867ry6Wo9iX9aPOJ7T/pnVa6gn8mvS/Io+y1PsSPbHE2NjPFDV/yJv+WNdJspUSCKq9iHtjGS0nqz9lrToq+QnnMz7LR9hrToo5A5zJ+w/wCc0f2ZWtRRyBzmT/Z0NTJYw1coq+QOcreRDUtSUUEEdFSVHQAUUUUAFFFFABRRRQAUVJUdABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQXyH//W/VCpKKKzNCSio6KACiiigAooooAKkqOigCSio6KACiiigAooooAKKKKACio6krMAooqOgAqSiigAqOpKjrQCSio6KAJKKjooAkoqOpK5wCiio60AKKKKzAKKKKAJKKjqSgAooooAKKKkoAjqSiigApX6U+igCvRUlFAEdPjpaSSgCWmbBSVJQBHUlR1JQAUUUUAFFFFAEdSbKKKAI6KkooAZsFN8upaKAIvLo8upaKAK9P8ALqWigCLy6PLqWmP0oAiooooAjoqSigCOipKjoAKKKKACo6kooAjoqSo6ACiipKAI6KKKACipKjoAKKKKACiiigAooooNec//1/1UoqOpKzNCSiiigAqOiigAqSo6KACiiigAooqSgAooqOgAooqSgCOiiigAooooAKKKKAJKjoqVOlAEVFSVHSkAUUUVBmFFFFZmhHUlFFBmFFFFacgBRRRWYBRRRQaEdSUUUAFFFFABRRRQBJRRSv0oAfUdFFABUlR1JQAzYKSpKY/SgB9R0UUASUUUUAFFFFAEdSUUUAFFFFABRRRQAUUUUAFFFFABRRTH6UAJUdSUUAR0/wAulpPMoAWio6KACo6kooAjoqSigCOipKjoAkqOiigAooooAjoqSigCOpKKjoAKKKKACiiigAooooA//9D9UKKKkrM0CiiigAooooAKKKkoAjqSo6koAjqSio6AJKjoooAfHTtgpKjoAKkqOpKACo6KKACiiigAqSio6ACiiigAooooAKKKKzgAUUUVoAUUUUAFFFFZgFFFFZgFFFFABRRT46ADy6ZUlFABS7BSVJQBHRUlFAEdSVHUlABRRRQBHRUlFABRRRQAUVJRQBHRUlR0ASVHRUlABsqOpKjoAjqSiigAooooAKjqSo6AJKKjpPMoAZRRRQAUUUUAFFFFABRUdSUAFFFR0ASVHUlR0AFFFFAElR0VJQBHRRRQAUUUUAFR1JRQBHRUlR0Gh//R/VCpKjqSszQjqSo6koAKKKKACpKjooAKkqOpKAI6KkqOgAooooAKKkooAjoqSo6ACiiigAoqSigAqOrFFAFeipKjoAKjqSigAooooAKKKKACiiigAoqSiszMjooqSjkNCOinx0ygAoqSkjrMBlPjp2wUlaASVHUlFXyAR0VJRUAR1JRRRyAFR1YqOr5ACo6koqACiiigAooooAKKKKzAKkqOigAoqSo6ACiiigCOpKjqSgAqOpKjoAKjqxTNgoAioop/l0AMoqXYKioAKKkqOgCOipKKAI6KkqOgAoqSigCOiiigAqSiigCOiiigAooqSgCOipKKDWBHRUlFBZ//0v1QooorM0CpKKKACiipKAI6KkqOgAop/l0ygAooooAKKkqOgB8dOfpQnSm+XQAyiin+XQAyipKjoAfHTn6UlFABSp0qKpU6UANkplS7BUVABRQlSUAR0UUUAFFFFAElFJ5dLQAUqdKSlTpWfIZg/SkqSmbBWhoJRS7BSUAR0+Ojy6cnSlyAPooqOo5AJKKKKACiiigCSo6kqOtACpKjqSgCOiiigCOpKKKzAkooorMAooooAKjqSigCOiiigAooooAY/SkqSo6AJKi8ypai8ugBaKTy6cnSgBKKKkoAKr1YqOgCOiiigAooooAKKKKACio6koAKKKKACiiigCOiipKAI6KKKAJKKjooNYBRRRQWf//Z" alt="Ảnh cưới Dolinhanh Bridal, cô dâu nhìn chú rể">
+  <div class="hero-text">
+    <p class="hero-kicker">We're getting married</p>
+    <h1>Hi & Hà</h1>
+    <p class="hero-date">30 . 09 . 2026</p>
+    <button class="scroll-cue" data-scroll-to="#welcome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="3" width="8" height="14" rx="4"></rect><path d="M12 7v3"></path></svg>
+      Scroll to begin
+    </button>
+  </div>
+  <p class="hero-strip"><b>Save our date</b> &nbsp;·&nbsp; 30 . 09 . 2026 &nbsp;·&nbsp; TP.HCM, Việt Nam</p>
+</header>
+
+<section class="welcome" id="welcome" data-reveal>
+  <div class="welcome-grid">
+    <div class="welcome-inner">
+      <span class="mono-vertical">H · H</span>
+      <div>
+        <p class="eyebrow">Welcome</p>
+        <h2>Dear family &amp; friends,</h2>
+        <!-- LOI CHUNG dung cho MOI cap doi (chi Linh chot 2026-08-15) — chi
+             thay ten o dong .signature va monogram, KHONG viet lai doan van.
+             Giu giong trung tinh, khong nhac chi tiet rieng cua cap nao. -->
+        <p>Cảm ơn Cô/Chú, Anh/Chị đã luôn yêu thương, đồng hành và là một phần quan trọng trong hành trình của chúng mình. Sau những năm tháng cùng nhau đi qua bao vui buồn, hai đứa đã đến ngày muốn nắm tay nhau bước sang một chặng đường mới.</p>
+        <p>Sự hiện diện của mọi người trong ngày trọng đại này sẽ là niềm hạnh phúc lớn nhất đối với chúng mình.</p>
+        <p class="sign-off">With love,</p>
+        <p class="signature">Hi & Hà</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BO HAN 2 section theo yeu cau chi Linh 2026-08-15, de thiep dung tu dong
+     100% khong can bien tap tay:
+       1. section "Our story" (timeline 4 moc + 3 doan ke chuyen tinh yeu)
+       2. section "Pre-wedding gallery" (luoi 6-12 anh)
+     Thiep gio chi dung DUNG 1 ANH (hero). Muc Welcome giu lai nhung dung LOI
+     CHUNG, chi thay ten cap doi -> khong phai viet rieng cho tung khach. -->
+
+<section class="wedding-day" id="wedding-day" data-reveal>
+  <p class="eyebrow center">Thông tin tiệc cưới</p>
+  <div class="wedding-cards">
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3v3M9 6h6M12 6l7 5v10H5V11l7-5Z"></path><path d="M10 20v-5h4v5"></path></svg>
+      <p class="card-label">Groom's ceremony</p>
+      <p class="card-time">Thứ Tư 30.09.2026</p>
+      <p class="card-venue">123</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapGroomGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3v3M9 6h6M12 6l7 5v10H5V11l7-5Z"></path><path d="M10 20v-5h4v5"></path></svg>
+      <p class="card-label">Bride's ceremony</p>
+      <p class="card-time">Thứ Tư 30.09.2026</p>
+      <p class="card-venue">1234</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapBrideGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="4" width="14" height="17"></rect><path d="M9 8h2M13 8h2M9 12h2M13 12h2M9 16h2M13 16h2"></path></svg>
+      <p class="card-label">Reception</p>
+      <p class="card-time">18:00, Thứ Tư 30.09.2026</p>
+      <p class="card-venue">Agaa</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapReceptionGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="countdown-section" data-reveal>
+  <p class="eyebrow center">Countdown</p>
+  <div class="countdown" id="countdown" aria-live="off">
+    <div class="unit"><span class="num" id="cd-days">00</span><span class="label">Days</span></div>
+    <div class="unit"><span class="num" id="cd-hours">00</span><span class="label">Hours</span></div>
+    <div class="unit"><span class="num" id="cd-mins">00</span><span class="label">Minutes</span></div>
+    <div class="unit"><span class="num" id="cd-secs">00</span><span class="label">Seconds</span></div>
+  </div>
+</section>
+
+<!-- BO HAN 2 khoi theo yeu cau chi Linh 2026-08-15 (DLA cho thue vay, khong
+     giao phong su cuoi/video highlight nen ca 2 muc nay luon rong):
+       1. section "Phóng sự cưới" + nut Google Drive
+          (kem bien FULL_ALBUM_URL va listener #fullAlbumBtn trong JS)
+       2. khoi .video-section (anh full-bleed co nut play + dong "Video
+          highlight se duoc cap nhat sau buoi quay")
+     CSS cua .video-section van con trong <style> phong khi sau nay dung lai.
+     Anh hero gio la anh full-bleed DUY NHAT -> van bat buoc >= 1900px. -->
+
+<section class="dress-code" data-reveal><p class="eyebrow center">Dress code</p><div class="dress-code-row"><div class="dress-col"><span class="who">Ladies</span><div class="swatches"><div class="swatch"><span class="dot" style="background:#2b2b26"></span><span class="name">Đen</span></div></div></div><div class="dress-col"><span class="who">Gentlemen</span><div class="swatches"><div class="swatch"><span class="dot" style="background:#ffffff"></span><span class="name">Trắng</span></div></div></div></div></section>
+
+<!-- MUC MUNG CUOI — script tu sinh, chen vao dung cho nay.
+     Khach chon "Không" -> khong co gi o day (khong de section rong).
+     Khach chon "Có" -> 2 the Nha trai / Nha gai, moi the co ten ngan hang,
+     ten chu TK, so TK bam sao chep duoc, va MA QR VietQR TU SINH tu so TK
+     (chi Linh yeu cau 15/08/2026 — khach khong phai gui anh QR nua). -->
+
+
+<section class="rsvp" id="rsvp" data-reveal>
+  <p class="eyebrow center">Xác nhận tham dự</p>
+  <p class="section-lede">Chúng mình rất mong được gặp bạn trong ngày trọng đại. Nếu có thể, xin vui lòng xác nhận tham dự cùng chúng mình.</p>
+  <div class="rsvp-wrap">
+    <form id="rsvpForm">
+      <div class="row-2">
+        <div class="field">
+          <label for="rsvpName">Họ và tên</label>
+          <input id="rsvpName" name="name" type="text" required placeholder="Nguyễn Văn A">
+        </div>
+        <div class="field">
+          <label for="rsvpPhone">Số điện thoại (không bắt buộc)</label>
+          <input id="rsvpPhone" name="phone" type="tel" placeholder="09xx xxx xxx">
+        </div>
+      </div>
+      <div class="field">
+        <label>Xác nhận tham dự</label>
+        <div class="radio-row">
+          <label><input type="radio" name="attend" value="yes" checked> Rất vui được tham dự</label>
+          <label><input type="radio" name="attend" value="no"> Rất tiếc không thể tham dự</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rsvpCount">Số lượng khách đi cùng</label>
+        <select id="rsvpCount" name="count">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+        </select>
+      </div>
+      <button class="btn-line rsvp-submit" type="submit">Gửi</button>
+      <p class="rsvp-note">Nếu cần liên hệ trực tiếp, vui lòng nhắn Zalo hoặc gọi điện cho cô dâu chú rể.</p>
+    </form>
+
+    <div class="rsvp-success" id="rsvpSuccess" hidden>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 20s-7-4.4-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 5c-2.5 4.6-9.5 9-9.5 9Z"></path></svg>
+      <h3>Cảm ơn bạn!</h3>
+      <p>Chúng mình đã nhận được xác nhận tham dự của bạn. Sự hiện diện của bạn là món quà quý giá nhất đối với chúng mình.</p>
+      <div class="actions">
+        <button class="btn-line" id="addGoogleCal" type="button">📅 Add to Google Calendar</button>
+        <button class="btn-line ghost" id="addAppleCal" type="button">🍎 Add to Apple Calendar</button>
+        <a class="btn-line ghost" id="successMapLink" href="#" target="_blank" rel="noopener">📍 Open Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="share" id="share" data-reveal>
+  <p class="eyebrow center">Gửi cho khách mời</p>
+  <p class="section-lede">Anh chị tải tấm ảnh này về rồi gửi qua Zalo, Facebook hay in ra đều được.
+    Khách quét mã là mở được thiệp, không phải gõ link.</p>
+  <div class="share-card">
+    <canvas id="shareCanvas" class="share-preview" width="1080" height="1350"></canvas>
+    <div class="share-actions">
+      <a class="btn-line" id="btnTaiAnh" download="thiep-cuoi.png" href="#">Tải ảnh thiệp</a>
+      <button class="btn-line ghost" type="button" id="btnChepLink">Sao chép link thiệp</button>
+    </div>
+    <p class="share-note" id="shareNote">Đang dựng ảnh…</p>
+  </div>
+</section>
+
+<footer class="thanks" data-reveal>
+  <!-- Quote footer da BO theo yeu cau chi Linh 2026-08-15 (ban Dolinhanh khong
+       dung cau quote nua) — xem references/footer-quotes.md. -->
+  <h3>Hi & Hà</h3>
+  <p>With heartfelt thanks for the love and companionship you have always given us. Your presence on our wedding day would be the greatest joy for our families.</p>
+  <p style="font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--charcoal-soft);margin-top:18px">30 . 09 . 2026</p>
+  <p class="credit">Wedding Invitation by Nupakachi Wedding &amp; Dolinhanh Bridal</p>
+  <p class="gift">A design gift for our couples</p>
+  <p class="ig"><a href="https://www.instagram.com/nupakachiweddingfilm/" target="_blank" rel="noopener">@nupakachiweddingfilm</a>
+    <span class="ig-dot">·</span>
+    <a href="https://www.instagram.com/dolinhanh.bridal/" target="_blank" rel="noopener">@dolinhanh.bridal</a></p>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+  <button class="lightbox-prev" id="lbPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"></path></svg></button>
+  <figure><img id="lbImg" src="" alt=""></figure>
+  <button class="lightbox-next" id="lbNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"></path></svg></button>
+  <div class="lightbox-count" id="lbCount"></div>
+</div>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var bar = document.getElementById('progressBar');
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function () {
+      var h = document.documentElement;
+      var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (scrolled || 0) + '%';
+      nav.classList.toggle('solid', h.scrollTop > window.innerHeight * 0.7);
+    }, { passive: true });
+
+    document.querySelectorAll('[data-scroll-to]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = document.querySelector(btn.getAttribute('data-scroll-to'));
+        if (target) target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+
+    var revealEls = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && !reduced) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var target = new Date('2026-09-30T18:00:00+07:00').getTime();
+    function tick() {
+      var now = Date.now();
+      var diff = Math.max(0, target - now);
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor(diff % 86400000 / 3600000);
+      var m = Math.floor(diff % 3600000 / 60000);
+      var s = Math.floor(diff % 60000 / 1000);
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      document.getElementById('cd-days').textContent = pad(d);
+      document.getElementById('cd-hours').textContent = pad(h);
+      document.getElementById('cd-mins').textContent = pad(m);
+      document.getElementById('cd-secs').textContent = pad(s);
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    var toastEl = document.createElement('div');
+    toastEl.className = 'toast';
+    toastEl.setAttribute('role', 'status');
+    document.body.appendChild(toastEl);
+    var toastTimer;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+    }
+
+    // Copy to clipboard
+    document.querySelectorAll('.copy-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var value = btn.getAttribute('data-copy');
+        var done = function () { toast('Đã sao chép số tài khoản'); };
+        var fail = function () { toast('Không sao chép được, vui lòng chép thủ công'); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).then(done, fail);
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = value;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { fail(); }
+          document.body.removeChild(ta);
+        }
+      });
+    });
+
+    // Map links
+    var venues = {
+      groom: '123',
+      bride: '1234',
+      reception: 'Agaa'
+    };
+    function gmaps(addr) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr); }
+    document.getElementById('mapGroomGoogle').href = gmaps(venues.groom);
+    document.getElementById('mapBrideGoogle').href = gmaps(venues.bride);
+    document.getElementById('mapReceptionGoogle').href = gmaps(venues.reception);
+    document.getElementById('successMapLink').href = gmaps(venues.reception);
+
+    // Add to calendar
+    function buildIcs() {
+      return [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT',
+        'DTSTART:20260930T110000Z', 'DTEND:20260930T140000Z',
+        'SUMMARY:Tiệc cưới Hi & Hà',
+        'LOCATION:' + venues.reception,
+        'DESCRIPTION:Trân trọng kính mời đến chung vui tiệc cưới của Hi & Hà.',
+        'END:VEVENT', 'END:VCALENDAR'
+      ].join('\r\n');
+    }
+    document.getElementById('addAppleCal').addEventListener('click', function () {
+      var blob = new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'ThiepCuoi-Minh-Linh.ics';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      toast('Đã tải file lịch, mở file để thêm vào Apple Calendar');
+    });
+    document.getElementById('addGoogleCal').addEventListener('click', function () {
+      var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        + '&text=' + encodeURIComponent('Tiệc cưới Hi & Hà')
+        + '&dates=20260930T110000Z/20260930T140000Z'
+        + '&details=' + encodeURIComponent('Trân trọng kính mời đến chung vui tiệc cưới của Hi & Hà.')
+        + '&location=' + encodeURIComponent(venues.reception);
+      window.open(url, '_blank', 'noopener');
+    });
+
+    // RSVP -- GUI THAT ve Apps Script Web App (16/08/2026).
+    // Truoc day chi hien "cam on" roi vut du lieu di, co dau chu re khong he
+    // nhan duoc gi (GitHub Pages la hosting tinh, khong nhan POST). Nay gui
+    // sang RSVP_URL -- mot Apps Script Web App rieng -- de no ghi vao Sheet
+    // va mail cho co dau chu re.
+    // Dung mode:'no-cors' + KHONG dat header: nhu vay la "simple request",
+    // trinh duyet khong ban preflight OPTIONS (Apps Script khong tra loi
+    // OPTIONS -> dat header vao la hong). Doi lai khong doc duoc phan hoi,
+    // nen bao thanh cong ngay; that bai thi luu vao localStorage de gui lai.
+    var RSVP_URL  = 'https://script.google.com/macros/s/AKfycbwVWHJMBZFw6XX7t2Haqs9AT1UTgPmdKUHLzm69Si_h7-ylKNd7HsfcwUQeI4AL-uiLVw/exec';
+    var MA_THIEP  = 'thiep-hi-ha';
+
+    function guiRsvp(data) {
+      if (!RSVP_URL || RSVP_URL.charAt(0) === '{') return;   // chua cau hinh
+      try {
+        fetch(RSVP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(data)
+        })['catch'](function () { luuTam(data); });
+      } catch (err) { luuTam(data); }
+    }
+    function luuTam(data) {
+      try {
+        var k = 'rsvp_chua_gui';
+        var ds = JSON.parse(localStorage.getItem(k) || '[]');
+        ds.push(data);
+        localStorage.setItem(k, JSON.stringify(ds));
+      } catch (e) {}
+    }
+
+    document.getElementById('rsvpForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      guiRsvp({
+        ma: MA_THIEP,
+        ten: (document.getElementById('rsvpName') || {}).value || '',
+        sdt: (document.getElementById('rsvpPhone') || {}).value || '',
+        thamdu: (document.querySelector('input[name="attend"]:checked') || {}).value || '',
+        sokhach: (document.getElementById('rsvpCount') || {}).value || ''
+      });
+      document.getElementById('rsvpForm').hidden = true;
+      document.getElementById('rsvpSuccess').hidden = false;
+      this.reset();
+    });
+
+    /* ---------- Dựng ảnh thiệp có mã QR (bố cục theo mẫu chị Linh 16/08/2026) ----------
+       Chu de THANG len anh, khong co dai trang o duoi. Dau & mau vang.
+       QR dat goc duoi TRAI, ben phai la loi cam on + chu ky. */
+    (function () {
+      var cv = document.getElementById('shareCanvas');
+      if (!cv) return;
+      var ctx = cv.getContext('2d');
+      var note = document.getElementById('shareNote');
+      var nutTai = document.getElementById('btnTaiAnh');
+      var linkThiep = location.href.split('#')[0];
+      var tenCap = ((document.querySelector('.hero-text h1') || {}).textContent || '').trim();
+      var ngayCap = ((document.querySelector('.hero-date') || {}).textContent || '').trim();
+      var VANG = '#c9a86a';
+      var W = cv.width, H = cv.height;
+
+      var SERIF = 'Georgia, "Times New Roman", serif';
+      var SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+      var VIET = '"Snell Roundhand", "Apple Chancery", "Brush Script MT", Georgia, serif';
+
+      /* Canvas khong co letter-spacing o moi trinh duyet -> ve tung chu mot */
+      function beRong(t, gian) {
+        var w = 0;
+        for (var i = 0; i < t.length; i++) w += ctx.measureText(t[i]).width + (i ? gian : 0);
+        return w;
+      }
+      function veGian(t, giua, y, gian) {
+        var x = giua - beRong(t, gian) / 2;
+        for (var i = 0; i < t.length; i++) {
+          ctx.fillText(t[i], x, y);
+          x += ctx.measureText(t[i]).width + gian;
+        }
+      }
+      function dat(font, mau, alpha) {
+        ctx.font = font; ctx.fillStyle = mau;
+        ctx.globalAlpha = (alpha === undefined) ? 1 : alpha;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        /* Anh cuoi thuong sang mau -> khong co bong thi chu vang chim mat */
+        ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 14;
+        ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 1;
+      }
+
+      /* Ten: "A & B" — chu trang, dau & mau vang */
+      function veTen(y, cao) {
+        var p = tenCap.split(/\s*&\s*/);
+        ctx.font = cao + 'px ' + SERIF;
+        if (p.length < 2) { dat(cao + 'px ' + SERIF, '#ffffff'); veGian(tenCap, W / 2, y, 2); return; }
+        var fA = ctx.measureText(p[0]).width, fB = ctx.measureText(p[1]).width;
+        ctx.font = 'italic ' + Math.round(cao * 0.72) + 'px ' + SERIF;
+        var fAmp = ctx.measureText('&').width;
+        var khe = cao * 0.42;
+        var tong = fA + khe + fAmp + khe + fB;
+        var x = (W - tong) / 2;
+        dat(cao + 'px ' + SERIF, '#ffffff');
+        ctx.fillText(p[0], x, y); x += fA + khe;
+        dat('italic ' + Math.round(cao * 0.72) + 'px ' + SERIF, VANG);
+        ctx.fillText('&', x, y); x += fAmp + khe;
+        dat(cao + 'px ' + SERIF, '#ffffff');
+        ctx.fillText(p[1], x, y);
+      }
+
+      function veNen(anh) {
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#141414'; ctx.fillRect(0, 0, W, H);
+        if (anh) {
+          var ti = Math.max(W / anh.naturalWidth, H / anh.naturalHeight);
+          var w = anh.naturalWidth * ti, h = anh.naturalHeight * ti;
+          ctx.drawImage(anh, (W - w) / 2, (H - h) / 2, w, h);
+        }
+        /* lop toi mo de chu noi tren moi anh */
+        var gt = ctx.createLinearGradient(0, 0, 0, H * 0.42);
+        gt.addColorStop(0, 'rgba(0,0,0,0.58)'); gt.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gt; ctx.fillRect(0, 0, W, H * 0.42);
+        var gd = ctx.createLinearGradient(0, H * 0.52, 0, H);
+        gd.addColorStop(0, 'rgba(0,0,0,0)'); gd.addColorStop(1, 'rgba(0,0,0,0.74)');
+        ctx.fillStyle = gd; ctx.fillRect(0, H * 0.52, W, H * 0.48);
+
+        /* --- khoi tren --- */
+        dat('500 24px ' + SANS, '#ffffff', 0.95);
+        veGian("WE'RE GETTING MARRIED", W / 2, 104, 9);
+
+        veTen(232, 112);
+
+        ctx.globalAlpha = 1;
+        dat('400 25px ' + SANS, '#ffffff', 0.95);
+        veGian(ngayCap.toUpperCase(), W / 2, 292, 9);
+
+        dat('italic 62px ' + VIET, VANG, 1);
+        ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 12;
+        veGian('Save our date', W / 2, 366, 1);
+        ctx.shadowBlur = 0;
+
+        ctx.globalAlpha = 1;
+      }
+
+      function veCuoi(qr) {
+        var le = 78, qrKt = 330, qrY = H - 210 - qrKt;
+
+        /* nhan tren QR */
+        dat('500 22px ' + SANS, '#ffffff', 0.95);
+        ctx.textAlign = 'left';
+        ctx.fillText('QUÉT MÃ ĐỂ XEM', le, qrY - 44);
+        ctx.fillText('THIỆP CƯỚI ONLINE', le, qrY - 18);
+
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+        if (qr) {
+          /* Vien trang nho het co (chi Linh chot 16/08/2026): KHONG ve them
+             khung trang bao ngoai nua. Anh QR tu API da co san vung trang
+             margin=4 module — do la vien toi thieu de may quet nhan duoc.
+             Bo not vung do la ma khong quet duoc. */
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(le, qrY, qrKt, qrKt);
+          ctx.drawImage(qr, le, qrY, qrKt, qrKt);
+        }
+
+        /* loi cam on ben phai QR */
+        var xp = le + qrKt + 54;
+        dat('500 23px ' + SANS, '#ffffff', 0.95);
+        ctx.fillText('THANK YOU FOR BEING A PART', xp, qrY + 104);
+        ctx.fillText('OF OUR SPECIAL DAY!', xp, qrY + 138);
+
+        dat('italic 30px ' + SERIF, '#ffffff', 0.95);
+        ctx.fillText('with love,', xp, qrY + 200);
+
+        dat('italic 52px ' + VIET, VANG, 1);
+        ctx.fillText(tenCap, xp, qrY + 262);
+
+        /* duong ke vang + credit */
+        ctx.globalAlpha = 0.22; ctx.strokeStyle = VANG; ctx.lineWidth = 1; ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.moveTo(le, H - 104); ctx.lineTo(W - le, H - 104); ctx.stroke();
+
+        /* Credit: chi Linh chot phai RAT NHO va MO — chi de nhan ra thuong hieu,
+           khong duoc hut mat khoi ten co dau chu re. */
+        dat('400 11px ' + SANS, '#ffffff', 0.42);
+        ctx.textAlign = 'left'; ctx.shadowBlur = 0;
+        veGian('WEDDING INVITATION BY NUPAKACHI WEDDING & DOLINHANH BRIDAL', W / 2, H - 62, 2);
+        dat('400 10px ' + SANS, '#ffffff', 0.34);
+        ctx.shadowBlur = 0;
+        veGian('A DESIGN GIFT FOR OUR COUPLES', W / 2, H - 40, 2);
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      }
+
+      function xong(coQR) {
+        try {
+          nutTai.href = cv.toDataURL('image/png');
+          var ten = tenCap.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+          nutTai.setAttribute('download', 'thiep-cuoi' + (ten ? '-' + ten : '') + '.png');
+          note.textContent = coQR
+            ? 'Bấm “Tải ảnh thiệp” để lưu về máy. Trên điện thoại thì bấm giữ vào ảnh rồi chọn Lưu ảnh.'
+            : 'Đã dựng ảnh nhưng chưa tải được mã QR. Anh chị gửi kèm link cho khách giúp em ạ.';
+        } catch (e) {
+          note.textContent = 'Trình duyệt này không cho lưu ảnh. Anh chị bấm giữ vào ảnh rồi chọn Lưu ảnh, hoặc chụp màn hình ạ.';
+        }
+      }
+
+      var anhBia = document.querySelector('.hero-photo');
+      function batDau() {
+        veNen(anhBia && anhBia.naturalWidth ? anhBia : null);
+        /* Hai nguon ma QR: nguon chinh hong (mang yeu, bi chan) thi thu nguon
+           du phong. Ca hai deu tra header CORS nen canvas khong bi taint. */
+        var nguon = [
+          'https://api.qrserver.com/v1/create-qr-code/?margin=4&size=600x600&data=',
+          'https://quickchart.io/qr?margin=4&size=600&text='
+        ];
+        var k = 0;
+        function thuQR() {
+          if (k >= nguon.length) { veCuoi(null); xong(false); return; }
+          var qr = new Image();
+          qr.crossOrigin = 'anonymous';
+          qr.onload = function () { veCuoi(qr); xong(true); };
+          qr.onerror = function () { k++; thuQR(); };
+          qr.src = nguon[k] + encodeURIComponent(linkThiep);
+        }
+        thuQR();
+      }
+      if (anhBia && !anhBia.complete) {
+        anhBia.addEventListener('load', batDau);
+        anhBia.addEventListener('error', batDau);
+      } else { batDau(); }
+
+      var nutChep = document.getElementById('btnChepLink');
+      if (nutChep) {
+        nutChep.addEventListener('click', function () {
+          navigator.clipboard.writeText(linkThiep).then(function () {
+            nutChep.textContent = 'Đã sao chép link';
+            setTimeout(function () { nutChep.textContent = 'Sao chép link thiệp'; }, 2000);
+          });
+        });
+      }
+    })();
+
+    // Lightbox
+    var galleries = {
+      rep: Array.from(document.querySelectorAll('#repGrid .rep-tile img')).map(function (img) { return { src: img.src, alt: img.alt }; }),
+      pw: Array.from(document.querySelectorAll('#pwGrid .rep-tile img')).map(function (img) { return { src: img.src, alt: img.alt }; })
+    };
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lbImg');
+    var lbCount = document.getElementById('lbCount');
+    var activeGallery = 'rep';
+    var activeIndex = 0;
+
+    function openLightbox(galleryName, index) {
+      activeGallery = galleryName;
+      activeIndex = index;
+      showLightboxImage();
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function showLightboxImage() {
+      var set = galleries[activeGallery];
+      var item = set[activeIndex];
+      lbImg.src = item.src;
+      lbImg.alt = item.alt;
+      lbCount.textContent = (activeIndex + 1) + ' / ' + set.length;
+    }
+    function closeLightbox() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function stepLightbox(dir) {
+      var set = galleries[activeGallery];
+      activeIndex = (activeIndex + dir + set.length) % set.length;
+      showLightboxImage();
+    }
+
+    document.querySelectorAll('.rep-tile').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openLightbox(btn.getAttribute('data-gallery'), parseInt(btn.getAttribute('data-index'), 10));
+      });
+    });
+    document.getElementById('lbClose').addEventListener('click', closeLightbox);
+    document.getElementById('lbPrev').addEventListener('click', function () { stepLightbox(-1); });
+    document.getElementById('lbNext').addEventListener('click', function () { stepLightbox(1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
+  })();
+</script>
+
+</body>
+</html>
+<!-- ban:20260909-064348 -->
